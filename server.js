@@ -8,9 +8,28 @@ app.use(express.json());
 let romances = [
     {id: 1, nome: "The Fragrant Flower Blooms with Dignity", numDeEps: 13, genero:'Slice of life', tipo:"anime"},
     {id: 2, nome: "Call of The Night", numDeEps: 26, genero:'Sobrenatural', tipo:"anime"},
-    {id: 3, nome: "My Dress-Up Darling", numDeEps: 24, genero:'SLice of Life', tipo:"anime"}
+    {id: 3, nome: "Anne With E", numDeEps: 40, genero:'Ficção Histórica', tipo:"serie"}
 ];
 
+//Mostrar a primeiro romance da Lista
+
+app.get('/romances/primeiro', (req, res) => {
+    if (romances.length > 0) {
+        res.json(romances[0]);
+    } else {
+        res.status(404).json({ error: 'conteudo não encontrado.'});
+    }
+});
+
+//Mostrar ultimo romance da lista
+
+app.get('/romances/ultimo', (req, res) => {
+    if (romances.length > 0) {
+        res.json(romances[romances.length -1]);
+    } else {
+        res.status(404).json({ error: 'Romance não encontrado.'});
+    }
+});
 app.get('/romances', (req, res) =>{
     res.send(romances)
 });
@@ -103,17 +122,34 @@ app.get('/romances/genero/:genero', (req, res) => {
     res.send(pelogenero)
 })
 // POR Minimos de EPs:
-app.get('/romances/epsMinimos/:genero', (req, res) => {
-    let pelogenero = [];
+app.get('/romances/epsMinimos/:num', (req, res) => {
+    let pelonumero = [];
     for(let i = 0; i < romances.length; i++){
-        const genero = req.params.genero;
+        const num = req.params.num;
         const romance = romances[i];
-        if((romance.genero).toUpperCase() === genero.toUpperCase()){
-            pelogenero.push(romance)
+        if((romance.numDeEps) >= num){
+            pelonumero.push(romance)
         }
     }
-    res.send(pelogenero)
+    res.send(pelonumero)
 })
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}/romances`);
 })
+
+// POR Maximos de EPs:
+app.get('/romances/epsMaximos/:num', (req, res) => {
+    let pelonumero = [];
+    for(let i = 0; i < romances.length; i++){
+        const num = req.params.num;
+        const romance = romances[i];
+        if((romance.numDeEps) <= num){
+            pelonumero.push(romance)
+        }
+    }
+    res.send(pelonumero)
+})
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}/romances`);
+})
+
